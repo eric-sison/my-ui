@@ -4,17 +4,17 @@ import cx from 'classnames';
 export const styles = ({ disable, variant, shadow, size, full, capitalize }: ButtonProps) => {
   return cx({
     // default style using default props
-    'rounded transition-all duration-75 ease-in-out focus:outline-none font-semibold text-opacity-90 tracking-wide text-white':
+    'rounded transition-all duration-75 ease-in-out focus:outline-none font-semibold text-opacity-90 tracking-wide':
       true,
 
     // button style based on variant
-    'bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 focus:ring-4 focus:ring-indigo-100 active:scale-95':
+    'text-white bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 focus:ring-4 focus:ring-indigo-100 active:scale-95':
       variant === 'primary' && !disable,
 
-    'bg-orange-500 hover:bg-orange-600 active:bg-orange-700 focus:ring-4 focus:ring-orange-100 active:scale-95':
+    'text-white bg-orange-500 hover:bg-orange-600 active:bg-orange-700 focus:ring-4 focus:ring-orange-100 active:scale-95':
       variant === 'warning' && !disable,
 
-    'bg-red-500 hover:bg-red-600 active:bg-red-700 focus:ring-4 focus:ring-red-100 active:scale-95':
+    'text-white bg-red-500 hover:bg-red-600 active:bg-red-700 focus:ring-4 focus:ring-red-100 active:scale-95':
       variant === 'danger' && !disable,
 
     'text-gray-700 border bg-white hover:bg-slate-50 active:bg-slate-100 active:bg-opacity-70 focus:ring-4 focus:ring-slate-100 active:scale-95':
