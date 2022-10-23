@@ -10,6 +10,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { Pagination } from '../Pagination';
 
 export type TableProps = {
   data: Array<any>;
@@ -86,6 +87,12 @@ export const DataTable: FunctionComponent<TableProps> = ({ data, columns, pagina
             })}
           </tbody>
         </table>
+
+        {paginate && (
+          <div className="p-5 sticky bottom-0 bg-white border-t border-t-slate-200 shadow-md shadow-gray-50">
+            <Pagination table={table} />
+          </div>
+        )}
       </div>
     </>
   );
