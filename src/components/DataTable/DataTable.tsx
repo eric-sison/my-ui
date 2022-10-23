@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useState, useMemo } from 'react';
+import { tableHeaderStyles } from './DataTable.styles';
 import {
   ColumnDef,
   flexRender,
@@ -7,18 +8,16 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
-  useReactTable
+  useReactTable,
 } from '@tanstack/react-table';
-import { tableHeaderStyles } from './DataTable.styles';
 
 export type TableProps = {
   data: Array<any>;
   columns: Array<ColumnDef<any, any>>;
   paginate?: boolean;
-  onRowClick?: () => void;
 };
 
-export const DataTable: FunctionComponent<TableProps> = ({ data, columns, onRowClick }) => {
+export const DataTable: FunctionComponent<TableProps> = ({ data, columns, paginate }) => {
   // set state for sorting the table
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -37,25 +36,25 @@ export const DataTable: FunctionComponent<TableProps> = ({ data, columns, onRowC
     onSortingChange: setSorting,
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel()
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
     <>
-      <div className="bg-white rounded-md overflow-y-auto">
-        <table className="w-full text-left table-auto whitespace-no-wrap bg-white">
-          <thead className="text-xs text-gray-600 uppercase">
-            {table.getHeaderGroups().map(group => {
+      <div className="bg-white rounded-md overflow-y-auto h-full w-full flex flex-col">
+        <table className="w-full text-left table-auto whitespace-no-wrap bg-white flex-1">
+          <thead className="text-sm text-gray-600 uppercase sticky top-0 bg-white border-b shadow-md shadow-gray-50">
+            {table.getHeaderGroups().map((group) => {
               return (
                 <tr key={group.id}>
-                  {group.headers.map(header => {
+                  {group.headers.map((header) => {
                     return (
                       <th key={header.id} scope="col" className="py-5 px-6">
                         {header.isPlaceholder ? null : (
                           <div
                             {...{
                               className: tableHeaderStyles(header.column.getCanSort()),
-                              onClick: header.column.getToggleSortingHandler()
+                              onClick: header.column.getToggleSortingHandler(),
                             }}
                           >
                             {flexRender(header.column.columnDef.header, header.getContext())}
@@ -72,14 +71,10 @@ export const DataTable: FunctionComponent<TableProps> = ({ data, columns, onRowC
 
           {/* start of table body */}
           <tbody>
-            {table.getRowModel().rows.map(row => {
+            {table.getRowModel().rows.map((row) => {
               return (
-                <tr
-                  key={row.id}
-                  onClick={onRowClick}
-                  className="even:bg-slate-50 hover:bg-slate-100 cursor-pointer text-gray-500 text-xs"
-                >
-                  {row.getVisibleCells().map(cell => {
+                <tr key={row.id} className="odd:bg-slate-50 hover:bg-slate-100 cursor-pointer text-gray-500 text-sm">
+                  {row.getVisibleCells().map((cell) => {
                     return (
                       <td key={cell.id} className="py-4 px-6 border-gray-100">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
