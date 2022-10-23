@@ -1,13 +1,32 @@
 import React, { ButtonHTMLAttributes, ReactNode } from 'react';
+import { styles } from './Button.styles';
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: ReactNode | Array<ReactNode>;
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: 'primary' | 'warning' | 'danger' | 'white';
+  size?: 'sm' | 'md' | 'lg';
+  shadow?: boolean;
+  full?: boolean;
+  capitalize?: boolean;
+  disable?: boolean;
+  children: ReactNode;
 };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+  // desconstruct fields to separate custom props and built in props
+  const { disable, children, variant, size, shadow, full, capitalize, ...rest } = props;
+
   return (
-    <button ref={ref} className="p-5 bg-indigo-600 text-white">
-      {props.children}
+    <button disabled={disable} {...rest} ref={ref} className={styles(props)}>
+      {children}
     </button>
   );
 });
+
+Button.defaultProps = {
+  variant: 'primary',
+  size: 'sm',
+  shadow: false,
+  full: false,
+  capitalize: false,
+  disable: false,
+};
