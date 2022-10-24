@@ -1,14 +1,14 @@
 import { Menu, Transition } from '@headlessui/react';
 import React, { Fragment, FunctionComponent, ReactNode, useState } from 'react';
 import { usePopper } from 'react-popper';
-import { popperStyles } from './ContextMenu.styles';
+import { contentStyles, popperStyles } from './ContextMenu.styles';
 
 type Props = {
   children: ReactNode | Array<ReactNode>;
 };
 
 type MenuItem = {
-  content: JSX.Element;
+  content: JSX.Element | string;
 };
 
 type ContextMenuProps = Props & {
@@ -39,6 +39,7 @@ type ContextMenuComposition = {
 
 type ContentProps = {
   items: Array<MenuItem>;
+  withDivider?: boolean;
 };
 
 const offsetModifier = {
@@ -88,12 +89,12 @@ const Header: FunctionComponent<Props> = ({ children }) => {
   return <header className="px-3 py-2 border-b border-gray-100">{children}</header>;
 };
 
-const Content: FunctionComponent<ContentProps> = ({ items }) => {
+const Content: FunctionComponent<ContentProps> = ({ items, withDivider }) => {
   return (
     <ul className="max-h-80 max-w-md overflow-y-auto">
       {items.map((item: MenuItem, index: number) => {
         return (
-          <li key={index} className="hover:bg-slate-100 pl-3 pr-8 py-3 cursor-pointer">
+          <li key={index} className={contentStyles(withDivider)}>
             {item.content}
           </li>
         );
