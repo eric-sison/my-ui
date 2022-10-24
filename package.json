@@ -13,7 +13,7 @@
   "author": "Eric C. Sison",
   "license": "MIT",
   "peerDependencies": {
-    "react": ">=18"
+    "react": ">=16"
   },
   "devDependencies": {
     "@babel/core": "^7.19.6",
