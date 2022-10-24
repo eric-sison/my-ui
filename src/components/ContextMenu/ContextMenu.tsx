@@ -1,5 +1,5 @@
-import { Menu, Portal } from '@headlessui/react';
-import React, { FunctionComponent, ReactNode, useState } from 'react';
+import { Menu, Transition } from '@headlessui/react';
+import React, { Fragment, FunctionComponent, ReactNode, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { popperStyles } from './ContextMenu.styles';
 
@@ -68,11 +68,18 @@ export const ContextMenu: FunctionComponent<ContextMenuProps> & ContextMenuCompo
         {display()}
       </Menu.Button>
 
-      <Portal>
+      <Transition
+        as={Fragment}
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
         <Menu.Items as="div" style={styles.popper} {...attributes.popper} ref={setPopper} className={popperStyles()}>
           <Menu.Item as="div">{children}</Menu.Item>
         </Menu.Items>
-      </Portal>
+      </Transition>
     </Menu>
   );
 };
