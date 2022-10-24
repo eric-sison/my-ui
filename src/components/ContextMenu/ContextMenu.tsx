@@ -48,7 +48,11 @@ const offsetModifier = {
   },
 };
 
-export const ContextMenu: FunctionComponent<ContextMenuProps> & ContextMenuComposition = ({ children, placement }) => {
+export const ContextMenu: FunctionComponent<ContextMenuProps> & ContextMenuComposition = ({
+  display,
+  children,
+  placement,
+}) => {
   // initialize reference element to compose a popper
   const [reference, setReference] = useState<HTMLDivElement | null>(null);
 
@@ -61,7 +65,7 @@ export const ContextMenu: FunctionComponent<ContextMenuProps> & ContextMenuCompo
   return (
     <Menu as="div">
       <Menu.Button as="div" ref={setReference}>
-        {children}
+        {display()}
       </Menu.Button>
 
       <Portal>
