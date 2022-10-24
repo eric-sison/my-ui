@@ -1,17 +1,18 @@
 import { Menu, Portal } from '@headlessui/react';
 import React, { FunctionComponent, ReactNode, useState } from 'react';
 import { usePopper } from 'react-popper';
-import { itemStyles, popperStyles } from './ContextMenu.styles';
+import { popperStyles } from './ContextMenu.styles';
 
-type MenuItem = {
-  icon?: JSX.Element;
-  description: string;
-  action?: () => void;
+type Props = {
+  children: ReactNode | Array<ReactNode>;
 };
 
-type ContextMenuProps = {
-  children: ReactNode | Array<ReactNode>;
-  items: Array<MenuItem>;
+type MenuItem = {
+  content: JSX.Element;
+};
+
+type ContextMenuProps = Props & {
+  display: () => JSX.Element | string;
   placement?:
     | 'auto'
     | 'auto-start'
@@ -30,6 +31,16 @@ type ContextMenuProps = {
     | 'left-end';
 };
 
+type ContextMenuComposition = {
+  Header: typeof Header;
+  Content: typeof Content;
+  Footer: typeof Footer;
+};
+
+type ContentProps = {
+  items: Array<MenuItem>;
+};
+
 const offsetModifier = {
   name: 'offset',
   options: {
@@ -37,12 +48,12 @@ const offsetModifier = {
   },
 };
 
-export const ContextMenu: FunctionComponent<ContextMenuProps> = ({ children, items, placement }) => {
+export const ContextMenu: FunctionComponent<ContextMenuProps> & ContextMenuComposition = ({ children, placement }) => {
   // initialize reference element to compose a popper
   const [reference, setReference] = useState<HTMLDivElement | null>(null);
 
   // initialize the popper element
-  const [popper, setPopper] = useState<HTMLUListElement | null>(null);
+  const [popper, setPopper] = useState<HTMLDivElement | null>(null);
 
   // create a popper
   const { styles, attributes } = usePopper(reference, popper, { placement, modifiers: [offsetModifier] });
@@ -54,22 +65,42 @@ export const ContextMenu: FunctionComponent<ContextMenuProps> = ({ children, ite
       </Menu.Button>
 
       <Portal>
-        <Menu.Items {...attributes.popper} as="ul" ref={setPopper} style={styles.popper} className={popperStyles()}>
-          {items.map((item: MenuItem, index: number) => {
-            return (
-              <Menu.Item key={index} as="li">
-                {({ active }) => {
-                  return (
-                    <span onClick={item.action} className={itemStyles(active)}>
-                      {item.icon} {item.description}
-                    </span>
-                  );
-                }}
-              </Menu.Item>
-            );
-          })}
+        <Menu.Items as="div" style={styles.popper} {...attributes.popper} ref={setPopper} className={popperStyles()}>
+          <Menu.Item as="div">{children}</Menu.Item>
         </Menu.Items>
       </Portal>
     </Menu>
   );
+};
+
+const Header: FunctionComponent<Props> = ({ children }) => {
+  return <header className="px-3 py-2 border-b border-gray-100">{children}</header>;
+};
+
+const Content: FunctionComponent<ContentProps> = ({ items }) => {
+  return (
+    <ul className="max-h-80 max-w-md overflow-y-auto">
+      {items.map((item: MenuItem, index: number) => {
+        return (
+          <li key={index} className="hover:bg-slate-100 pl-3 pr-8 py-3 cursor-pointer">
+            {item.content}
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
+
+const Footer: FunctionComponent<Props> = ({ children }) => {
+  return <footer className="px-3 py-2 border-t border-gray-100">{children}</footer>;
+};
+
+ContextMenu.Header = Header;
+
+ContextMenu.Content = Content;
+
+ContextMenu.Footer = Footer;
+
+ContextMenu.defaultProps = {
+  placement: 'bottom-end',
 };
