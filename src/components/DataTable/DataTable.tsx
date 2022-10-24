@@ -44,7 +44,7 @@ export const DataTable: FunctionComponent<TableProps> = ({ data, columns, pagina
     <>
       <div className="bg-white rounded-md overflow-y-auto h-full w-full flex flex-col">
         <table className="w-full text-left table-auto whitespace-no-wrap bg-white flex-1">
-          <thead className="text-sm text-gray-600 uppercase sticky top-0 bg-white border-b shadow-md shadow-gray-50">
+          <thead className="text-sm text-gray-600 uppercase sticky top-0 bg-white border-b shadow-md shadow-gray-50 z-30">
             {table.getHeaderGroups().map((group) => {
               return (
                 <tr key={group.id}>
