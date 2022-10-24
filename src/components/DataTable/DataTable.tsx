@@ -7,6 +7,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
@@ -16,9 +17,10 @@ export type TableProps = {
   data: Array<any>;
   columns: Array<ColumnDef<any, any>>;
   paginate?: boolean;
+  onRowClick?: (row: Row<any>) => void;
 };
 
-export const DataTable: FunctionComponent<TableProps> = ({ data, columns, paginate }) => {
+export const DataTable: FunctionComponent<TableProps> = ({ data, columns, paginate, onRowClick }) => {
   // set state for sorting the table
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -44,7 +46,7 @@ export const DataTable: FunctionComponent<TableProps> = ({ data, columns, pagina
     <>
       <div className="bg-white rounded-md overflow-y-auto h-full w-full flex flex-col">
         <table className="w-full text-left table-auto whitespace-no-wrap bg-white flex-1">
-          <thead className="text-sm text-gray-600 uppercase sticky top-0 bg-white border-b shadow-md shadow-gray-50 z-30">
+          <thead className="text-sm text-gray-600 uppercase sticky top-0 bg-white border-b border-t-slate-200 z-30">
             {table.getHeaderGroups().map((group) => {
               return (
                 <tr key={group.id}>
@@ -74,7 +76,11 @@ export const DataTable: FunctionComponent<TableProps> = ({ data, columns, pagina
           <tbody>
             {table.getRowModel().rows.map((row) => {
               return (
-                <tr key={row.id} className="odd:bg-slate-50 hover:bg-slate-100 cursor-pointer text-gray-500 text-sm">
+                <tr
+                  key={row.id}
+                  onClick={onRowClick ? () => onRowClick(row) : () => null}
+                  className="odd:bg-slate-50 hover:bg-slate-100 cursor-pointer text-gray-500 text-sm"
+                >
                   {row.getVisibleCells().map((cell) => {
                     return (
                       <td key={cell.id} className="py-4 px-6 border-gray-100">
@@ -89,7 +95,7 @@ export const DataTable: FunctionComponent<TableProps> = ({ data, columns, pagina
         </table>
 
         {paginate && (
-          <div className="p-5 sticky bottom-0 bg-white border-t border-t-slate-200 shadow-md shadow-gray-50">
+          <div className="p-5 sticky bottom-0 bg-white border-t border-t-slate-200">
             <Pagination table={table} />
           </div>
         )}
