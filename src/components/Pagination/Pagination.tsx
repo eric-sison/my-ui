@@ -14,7 +14,7 @@ type PaginationProps = {
 
 export const Pagination: FunctionComponent<PaginationProps> = ({ table }) => {
   return (
-    <>
+    <div className="sticky bottom-0 bg-white p-5 border-t border-b border-b-white">
       <div className="flex items-center text-sm text-gray-500 justify-between">
         <div className="flex items-center gap-2">
           <span className="flex items-center gap-1">
@@ -81,7 +81,7 @@ export const Pagination: FunctionComponent<PaginationProps> = ({ table }) => {
           </PaginationButton>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
