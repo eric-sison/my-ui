@@ -20,7 +20,7 @@ export const slideOverHeaderStyles = (withCloseBtn: boolean | undefined) => {
 
 export const slideOverFooterStyles = (alignEnd: boolean | undefined) => {
   return cx({
-    'p-5 flex items-center gap-2 text-gray-200': true,
+    'p-5 flex items-center gap-2': true,
     'justify-end': alignEnd,
   });
 };
