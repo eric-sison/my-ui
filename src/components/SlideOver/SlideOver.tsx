@@ -1,6 +1,6 @@
 import React, { createContext, Fragment, FunctionComponent, ReactNode, useContext } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { panelStyles, slideOverHeaderStyles } from './SlideOver.styles';
+import { panelStyles, slideOverFooterStyles, slideOverHeaderStyles } from './SlideOver.styles';
 import { Close } from '../Close';
 
 type SlideOverContextState = {
@@ -103,7 +103,7 @@ const Body: FunctionComponent<Props> = ({ children }) => {
 };
 
 const Footer: FunctionComponent<FooterProps> = ({ children, alignEnd }) => {
-  return <footer className="p-5">{children}</footer>;
+  return <footer className={slideOverFooterStyles(alignEnd)}>{children}</footer>;
 };
 
 SlideOver.Header = Header;

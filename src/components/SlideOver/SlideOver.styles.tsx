@@ -17,3 +17,10 @@ export const slideOverHeaderStyles = (withCloseBtn: boolean | undefined) => {
     'flex items-start justify-between': withCloseBtn,
   });
 };
+
+export const slideOverFooterStyles = (alignEnd: boolean | undefined) => {
+  return cx({
+    'p-5 flex items-center gap-2 text-gray-200': true,
+    'justify-end': alignEnd,
+  });
+};
