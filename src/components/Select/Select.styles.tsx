@@ -29,9 +29,10 @@ export const selectSvgStyles = (size: 'xs' | 'sm' | 'md' | 'lg' | undefined) => 
   });
 };
 
-export const selectOptionsStyles = () => {
+export const selectOptionsStyles = (spaceY: boolean | undefined) => {
   return cx(
-    'rounded-md bg-white shadow-lg shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none text-sm overflow-clip'
+    'rounded-md bg-white shadow-lg shadow-slate-200 ring-1 ring-black ring-opacity-5 focus:outline-none text-sm overflow-clip',
+    { 'py-2': spaceY }
   );
 };
 

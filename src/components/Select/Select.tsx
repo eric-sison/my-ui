@@ -32,6 +32,7 @@ type SelectProps<T> = {
   size?: 'xs' | 'sm' | 'md' | 'lg';
   getReferenceWidth?: boolean;
   centerItems?: boolean;
+  spaceY?: boolean;
   placement?:
     | 'auto'
     | 'auto-start'
@@ -69,6 +70,7 @@ export const Select = <T extends object>({
   placement,
   getReferenceWidth,
   centerItems,
+  spaceY,
   onSelect,
 }: SelectProps<T>) => {
   // deconstruct fields from listDef object
@@ -111,7 +113,7 @@ export const Select = <T extends object>({
             ? { ...styles.popper, width: `${reference?.offsetWidth}px` }
             : { ...styles.popper, maxWidth: '28rem' }
         }
-        className={selectOptionsStyles()}
+        className={selectOptionsStyles(spaceY)}
       >
         {/** unordered list starts here */}
         <ul className="max-h-60 overflow-auto">
@@ -144,4 +146,5 @@ Select.defaultProps = {
   placement: 'bottom',
   getReferenceWidth: true,
   centerItems: false,
+  spaceY: false,
 };
