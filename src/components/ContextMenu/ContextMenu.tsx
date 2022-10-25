@@ -7,7 +7,7 @@ type Props = {
   children: ReactNode | Array<ReactNode>;
 };
 
-type MenuItem = {
+export type MenuItem = {
   content: JSX.Element | string;
 };
 

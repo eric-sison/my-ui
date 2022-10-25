@@ -1,23 +1,22 @@
 import { ButtonProps } from './Button';
 import cx from 'classnames';
 
-export const styles = ({ disable, variant, shadow, size, full, capitalize }: ButtonProps) => {
+export const styles = ({ disable, variant, shadow, size, full, capitalize, animate }: ButtonProps) => {
   return cx({
     // default style using default props
-    'rounded transition-all duration-75 ease-in-out focus:outline-none font-semibold text-opacity-90 tracking-wide':
-      true,
+    'rounded focus:outline-none font-semibold text-opacity-90 tracking-wide': true,
 
     // button style based on variant
-    'text-white bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 focus:ring-4 focus:ring-indigo-100 active:scale-95':
+    'text-white bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700 focus:ring-4 focus:ring-indigo-100':
       variant === 'primary' && !disable,
 
-    'text-white bg-orange-500 hover:bg-orange-600 active:bg-orange-700 focus:ring-4 focus:ring-orange-100 active:scale-95':
+    'text-white bg-orange-500 hover:bg-orange-600 active:bg-orange-700 focus:ring-4 focus:ring-orange-100':
       variant === 'warning' && !disable,
 
-    'text-white bg-red-500 hover:bg-red-600 active:bg-red-700 focus:ring-4 focus:ring-red-100 active:scale-95':
+    'text-white bg-red-500 hover:bg-red-600 active:bg-red-700 focus:ring-4 focus:ring-red-100':
       variant === 'danger' && !disable,
 
-    'text-gray-700 border bg-white hover:bg-slate-50 active:bg-slate-100 active:bg-opacity-70 focus:ring-4 focus:ring-slate-100 active:scale-95':
+    'text-gray-700 border bg-white hover:bg-slate-50 active:bg-slate-100 active:bg-opacity-70 focus:ring-4 focus:ring-slate-100':
       variant === 'white' && !disable,
 
     // button style based on shadow and variant
@@ -31,6 +30,8 @@ export const styles = ({ disable, variant, shadow, size, full, capitalize }: But
     'bg-orange-400 hover:bg-orange-400 active:bg-orange-400': disable && variant === 'warning',
     'bg-red-400 hover:bg-red-400 active:bg-red-400': disable && variant === 'danger',
     'bg-slate-50 hover:bg-slate-50 active:bg-slate-50 text-gray-400 border': disable && variant === 'white',
+
+    'active:scale-95 transition-all duration-75 ease-in-out': animate,
 
     'uppercase tracking-widest': capitalize,
 

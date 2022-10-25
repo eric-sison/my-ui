@@ -5,6 +5,7 @@ export * from './components/ContextMenu';
 export * from './components/DataTable';
 export * from './components/Modal';
 export * from './components/Pagination';
+export * from './components/Select';
 export * from './components/SlideOver';
 export * from './components/TextField';
 export * from './components/Wrapper';
