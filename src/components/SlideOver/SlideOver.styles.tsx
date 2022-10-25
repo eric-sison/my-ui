@@ -13,14 +13,13 @@ export const panelStyles = (size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | undefined)
 
 export const slideOverHeaderStyles = (withCloseBtn: boolean | undefined) => {
   return cx({
-    'p-5': true,
     'flex items-start justify-between': withCloseBtn,
   });
 };
 
 export const slideOverFooterStyles = (alignEnd: boolean | undefined) => {
   return cx({
-    'p-5 flex items-center gap-2': true,
+    'flex items-center gap-2': true,
     'justify-end': alignEnd,
   });
 };
