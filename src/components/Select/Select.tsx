@@ -1,5 +1,5 @@
 import { Listbox } from '@headlessui/react';
-import React, { Fragment, ReactNode, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { selectBtnStyles, selectItemStyles, selectOptionsStyles, selectSvgStyles } from './Select.styles';
 
