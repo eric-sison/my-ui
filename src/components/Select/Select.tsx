@@ -1,5 +1,5 @@
 import { Listbox } from '@headlessui/react';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, ReactNode, useState } from 'react';
 import { usePopper } from 'react-popper';
 import { selectBtnStyles, selectItemStyles, selectOptionsStyles, selectSvgStyles } from './Select.styles';
 
@@ -26,13 +26,15 @@ export type ListDef<T> = {
 type SelectProps<T> = {
   data: Array<T>;
   list: ListDef<T>;
-  onSelect?: (selectedItem: T) => void;
   withDivider?: boolean;
   full?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   getReferenceWidth?: boolean;
   centerItems?: boolean;
   spaceY?: boolean;
+  onSelect?: (selectedItem: T) => void;
+  createHeader?: () => JSX.Element;
+  createFooter?: () => JSX.Element;
   placement?:
     | 'auto'
     | 'auto-start'
@@ -72,6 +74,8 @@ export const Select = <T extends object>({
   centerItems,
   spaceY,
   onSelect,
+  createHeader,
+  createFooter,
 }: SelectProps<T>) => {
   // deconstruct fields from listDef object
   const { display, item } = list;
@@ -115,6 +119,8 @@ export const Select = <T extends object>({
         }
         className={selectOptionsStyles(spaceY)}
       >
+        {createHeader && <>{createHeader()}</>}
+
         {/** unordered list starts here */}
         <ul className="max-h-60 overflow-auto">
           {data.map((listItem: T, index: number) => {
@@ -134,6 +140,8 @@ export const Select = <T extends object>({
             );
           })}
         </ul>
+
+        {createFooter && <>{createFooter()}</>}
       </Listbox.Options>
     </Listbox>
   );
