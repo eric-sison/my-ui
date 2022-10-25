@@ -28,6 +28,7 @@ type FooterProps = Props & {
 
 type SlideOverComposition = {
   Header: typeof Header;
+  Title: typeof Title;
   Body: typeof Body;
   Footer: typeof Footer;
 };
@@ -87,9 +88,14 @@ const Header: FunctionComponent<HeaderProps> = ({ children, withCloseBtn }) => {
   // change close button
   return (
     <header className={slideOverHeaderStyles(withCloseBtn)}>
-      {children} {withCloseBtn && <Close onClick={() => setOpen(false)} size="sm" />}
+      {children}
+      {withCloseBtn && <Close onClick={() => setOpen(false)} size="sm" />}
     </header>
   );
+};
+
+const Title: FunctionComponent<Props> = ({ children }) => {
+  return <div>{children}</div>;
 };
 
 const Body: FunctionComponent<Props> = ({ children }) => {
@@ -101,6 +107,8 @@ const Footer: FunctionComponent<FooterProps> = ({ children, alignEnd }) => {
 };
 
 SlideOver.Header = Header;
+
+SlideOver.Title = Title;
 
 SlideOver.Body = Body;
 
