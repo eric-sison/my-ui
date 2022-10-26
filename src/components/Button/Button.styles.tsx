@@ -29,7 +29,7 @@ export const styles = ({ disable, variant, shadow, size, full, capitalize, anima
     'bg-indigo-400 hover:bg-indigo-400 active:bg-indigo-400': disable && variant === 'primary',
     'bg-orange-400 hover:bg-orange-400 active:bg-orange-400': disable && variant === 'warning',
     'bg-red-400 hover:bg-red-400 active:bg-red-400': disable && variant === 'danger',
-    'bg-slate-50 hover:bg-slate-50 active:bg-slate-50 text-gray-400 border': disable && variant === 'white',
+    'bg-slate-50 hover:bg-slate-50 active:bg-slate-50 text-slate-400 border': disable && variant === 'white',
 
     'active:scale-95 transition-all duration-75 ease-in-out': animate,
 
