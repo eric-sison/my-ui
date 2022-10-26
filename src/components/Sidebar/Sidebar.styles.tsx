@@ -1,6 +1,6 @@
 import cx from 'classnames';
 
-export const asideStyles = (open: boolean) => {
+export const asideStyles = (open: boolean | undefined) => {
   return cx({
     'flex-shrink-0 flex flex-col transition-all duration-300 text-white bg-slate-900': true,
     'w-56': open,

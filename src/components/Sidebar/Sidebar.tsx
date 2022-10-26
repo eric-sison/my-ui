@@ -9,7 +9,7 @@ type Props = {
 };
 
 type SidebarProps = Props & {
-  open: boolean;
+  open?: boolean;
 };
 
 type SidebarComposition = {
@@ -18,6 +18,15 @@ type SidebarComposition = {
 };
 
 export const SidebarContext = createContext({ open: true } as SidebarContextState);
+
+// create a custom hook to expose sidebar context
+export const useSidebar = (): boolean | undefined => {
+  // deconstruct value from this context
+  const { open } = useContext(SidebarContext);
+
+  // return the value
+  return open;
+};
 
 export const Sidebar: FunctionComponent<SidebarProps> & SidebarComposition = ({ open, children }) => {
   return (
@@ -42,3 +51,7 @@ const Main: FunctionComponent<Props> = ({ children }) => {
 
 Sidebar.Aside = Aside;
 Sidebar.Main = Main;
+
+Sidebar.defaultProps = {
+  open: true,
+};
