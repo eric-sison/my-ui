@@ -46,7 +46,7 @@ const Aside: FunctionComponent<Props> = ({ children }) => {
 };
 
 const Main: FunctionComponent<Props> = ({ children }) => {
-  return <main className="w-full h-full">{children}</main>;
+  return <main className="w-full h-full overflow-y-auto">{children}</main>;
 };
 
 Sidebar.Aside = Aside;
