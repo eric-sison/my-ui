@@ -19,13 +19,14 @@ type AlertComposition = {
 export type AlertProps = Props & {
   open: boolean;
   setOpen: (state: boolean) => void;
+  isStatic?: boolean;
 };
 
-export const Alert: FunctionComponent<AlertProps> & AlertComposition = ({ open, setOpen, children }) => {
+export const Alert: FunctionComponent<AlertProps> & AlertComposition = ({ open, setOpen, children, isStatic }) => {
   return (
     <>
       <Transition appear show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-50 pointer-events-none" onClose={() => null}>
+        <Dialog as="div" className="relative z-50" onClose={isStatic ? () => null : () => setOpen(false)}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -83,4 +84,5 @@ Footer.defaultProps = {
 
 Alert.defaultProps = {
   open: false,
+  isStatic: true,
 };
