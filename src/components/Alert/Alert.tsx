@@ -25,7 +25,7 @@ export const Alert: FunctionComponent<AlertProps> & AlertComposition = ({ open, 
   return (
     <>
       <Transition appear show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={() => setOpen(false)}>
+        <Dialog as="div" className="relative z-50 pointer-events-none" onClose={() => setOpen(false)}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
