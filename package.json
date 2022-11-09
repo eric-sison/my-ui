@@ -38,5 +38,9 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "@floating-ui/react-dom-interactions": "^0.10.3",
+    "framer-motion": "^7.6.5"
+  }
 }
