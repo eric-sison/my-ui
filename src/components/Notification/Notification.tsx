@@ -21,7 +21,7 @@ type NotificationProps = {
 export type NotificationHandle = {
   notify: (notif: Notification) => void;
   generateId: () => string;
-  dismiss?: (notificationId: string) => void;
+  dismiss: (notificationId: string) => void;
 };
 
 export const Notification = forwardRef<NotificationHandle, NotificationProps>(({ options }, ref) => {
