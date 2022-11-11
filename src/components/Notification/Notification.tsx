@@ -1,28 +1,29 @@
-import { MutableRefObject, useRef } from 'react';
-import { NotificationControllerHandle, notifId } from './NotificationController';
+import React, { FunctionComponent } from 'react';
+import { notifClass } from './Notification.styles';
 
-export const useNotification = () => {
-  // create a reference to the notification controller
-  const notifRef = useRef() as MutableRefObject<NotificationControllerHandle>;
+export type NotificationContentOptions = {
+  title?: string;
+  message: string;
+};
 
-  // create a function to show notification
-  const notify = (content: JSX.Element) => {
-    // generate a notification id
-    const notificationId = notifId();
+type NotificationProps = {
+  variant: 'success' | 'error';
+  content: NotificationContentOptions;
+  onClose?: () => void;
+};
 
-    // compose the notification
-    const notification = { notificationId, content };
-
-    // show the notification component
-    notifRef.current.notify(notification);
-
-    // return the created notificaiton
-    return notification;
-  };
-
-  // create a function to dismiss the notification
-  const dismiss = (id: string) => notifRef.current.dismiss(id);
-
-  // return so that parent components can access these
-  return { notifRef, notify, dismiss };
+export const Notification: FunctionComponent<NotificationProps> = ({
+  onClose,
+  variant,
+  content: { message, title },
+}) => {
+  return (
+    <div className={notifClass(variant)}>
+      {variant === 'success' ? (
+        <div>This is a success notification but with no styling applied yet</div>
+      ) : (
+        <div>This is an error notification but with no styling applied yet</div>
+      )}
+    </div>
+  );
 };

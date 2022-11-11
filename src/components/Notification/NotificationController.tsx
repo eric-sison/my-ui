@@ -1,35 +1,29 @@
 import { FloatingPortal } from '@floating-ui/react-dom-interactions';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import React from 'react';
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { notifClasses } from './NotificationController.styles';
+import { forwardRef, HTMLAttributes, useEffect, useImperativeHandle, useState } from 'react';
+import { notifControllerClass, notifPortalClass } from './Notification.styles';
 
 export type Notification = {
-  notificationId?: string;
-  content: JSX.Element;
+  id: string;
+  content: JSX.Element | string;
 };
 
-type NotificationControllerOptions = {
+export type NotificationControllerProps = HTMLAttributes<HTMLDivElement> & {
+  className?: string;
   autoClose?: boolean;
   duration?: number;
-  position?: 'top-right' | 'bottom-right';
-};
-
-type NotificationControllerProps = {
-  className?: string;
-  options?: NotificationControllerOptions;
+  gutter?: 1 | 2 | 3 | 4 | 5;
+  position?: 'top-right' | 'bottom-right' | 'top-center' | 'bottom-center';
 };
 
 export type NotificationControllerHandle = {
-  notify: (notif: Notification) => void;
-  dismiss: (notificationId: string) => void;
+  show: (notif: Notification) => void;
+  dismiss: (id: string) => void;
 };
 
-// define a function that will generate a random number as notification id
-export const notifId = () => Math.floor(100000000 + Math.random() * 900000000).toString();
-
 export const NotificationController = forwardRef<NotificationControllerHandle, NotificationControllerProps>(
-  ({ className, options }, ref) => {
+  ({ className, autoClose, duration, gutter, position }, ref) => {
     // notifications array that will hold all notification items
     const [notifs, setNotifs] = useState<Array<Notification>>([]);
 
@@ -40,8 +34,11 @@ export const NotificationController = forwardRef<NotificationControllerHandle, N
     const [hovering, setHovering] = useState(false);
 
     useImperativeHandle(ref, () => ({
-      notify: (notif: Notification) => addNotification(notif),
-      dismiss: (notificationId) => dismiss(notificationId),
+      // expose this method for showing a notification
+      show: (notif: Notification) => addNotification(notif),
+
+      // expose this method for closing a notification
+      dismiss: (notificationId) => removeNotification(notificationId),
     }));
 
     const addNotification = (notif: Notification) => {
@@ -55,14 +52,14 @@ export const NotificationController = forwardRef<NotificationControllerHandle, N
       setNotifs(newNotifs);
     };
 
-    const dismiss = (notificationId: string) => {
+    const removeNotification = (notificationId: string) => {
       // create a copy of notifs array
       const newNotifs = [...notifs];
 
       // loop through the new array
       newNotifs.map((notif, index) => {
         // check if current notif's id is equal to the passed notif id
-        if (notif.notificationId === notificationId) {
+        if (notif.id === notificationId) {
           // remove notif at current index
           newNotifs.splice(index, 1);
 
@@ -77,7 +74,7 @@ export const NotificationController = forwardRef<NotificationControllerHandle, N
 
     useEffect(() => {
       // dismiss the current notification
-      if (notification) dismiss(notification.notificationId as string);
+      if (notification) removeNotification(notification.id as string);
     }, [notification, setNotifs]);
 
     useEffect(() => {
@@ -85,12 +82,12 @@ export const NotificationController = forwardRef<NotificationControllerHandle, N
       var timer: any;
 
       // check all conditions
-      if (!hovering && options?.autoClose && notifs.length !== 0) {
+      if (!hovering && autoClose && notifs.length !== 0) {
         // get the oldest notification item from notifs array
         const oldestNotif = notifs[notifs.length - 1];
 
         // set oldest notification item as the current notification to dismiss
-        timer = setTimeout(() => setNotification(oldestNotif), options?.duration);
+        timer = setTimeout(() => setNotification(oldestNotif), duration);
       }
 
       // clean up timer
@@ -98,28 +95,34 @@ export const NotificationController = forwardRef<NotificationControllerHandle, N
     }, [hovering, notifs, setNotification]);
 
     return (
-      <FloatingPortal id="floating-ui-notification-portal">
-        <div
-          className={`${options?.position === 'top-right' ? 'top-0 right-0' : 'bottom-0 right-0'} fixed pr-5 py-5 z-50`}
-        >
+      <FloatingPortal id="notification-portal">
+        <div id="notification-controller" className={notifPortalClass({ position, gutter })}>
           <AnimatePresence>
             {notifs.map((notification: Notification) => {
               return (
-                <LayoutGroup key={notification.notificationId}>
+                <LayoutGroup key={notification.id}>
                   <motion.div
                     layout
-                    key={notification.notificationId}
-                    initial={{ opacity: 1, y: options?.position === 'top-right' ? -50 : 50 }}
+                    key={notification.id}
+                    initial={{
+                      opacity: 1,
+                      y: position === 'top-right' || position === 'top-center' ? -50 : 50,
+                    }}
                     animate={{ opacity: 1, y: 0, transition: { when: 'afterChildren' } }}
-                    exit={{ opacity: 0, translateX: 20, transition: { duration: 0.5, when: 'beforeChildren' } }}
+                    exit={{
+                      opacity: 0,
+                      translateX: position === 'top-right' || position === 'bottom-right' ? 20 : 0,
+                      translateY: position === 'top-center' ? -50 : position === 'bottom-center' ? 50 : undefined,
+                      transition: { duration: 0.5, when: 'beforeChildren' },
+                    }}
                   >
                     <div
                       onMouseEnter={() => setHovering(true)}
                       onMouseLeave={() => setHovering(false)}
-                      className={notifClasses(className)}
-                      key={notification.notificationId}
+                      className={notifControllerClass(className)}
+                      key={notification.id}
                     >
-                      <div className="w-full">{notification.content}</div>
+                      {notification.content}
                     </div>
                   </motion.div>
                 </LayoutGroup>
@@ -132,10 +135,12 @@ export const NotificationController = forwardRef<NotificationControllerHandle, N
   }
 );
 
+// define a function that will generate a random number as notification id
+export const notifId = () => Math.floor(100000000 + Math.random() * 900000000).toString();
+
 NotificationController.defaultProps = {
-  options: {
-    autoClose: false,
-    duration: 3000,
-    position: 'top-right',
-  },
+  autoClose: true,
+  duration: 3000,
+  gutter: 3,
+  position: 'top-right',
 };

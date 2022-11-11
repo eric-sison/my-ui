@@ -1,2 +1,2 @@
 export * from './NotificationController';
-export * from './Notification';
+export * from './useNotification';
