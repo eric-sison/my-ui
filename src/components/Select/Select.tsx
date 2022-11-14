@@ -1,158 +1,123 @@
+import { autoUpdate, offset, shift, size, useFloating } from '@floating-ui/react-dom-interactions';
 import { Listbox } from '@headlessui/react';
-import React, { Fragment, useState } from 'react';
-import { usePopper } from 'react-popper';
-import { selectBtnStyles, selectItemStyles, selectOptionsStyles, selectSvgStyles } from './Select.styles';
+import { AnimatePresence, motion } from 'framer-motion';
+import React from 'react';
+import { Fragment, FunctionComponent, useEffect, useState } from 'react';
+import { listBtnClass, listOptionsClass } from './Select.styles';
+import { ListDef } from './useSelect';
 
-/**
- *  define the different states of a list item
- */
-export type ListState = {
-  active: boolean;
-  selected: boolean;
-  disabled: boolean;
+export type RenderList<T> = {
+  default: (renderItem: string) => JSX.Element;
+  custom: (item: T) => JSX.Element;
 };
 
-/**
- *  this will help in defining the list
- */
-export type ListDef<T> = {
-  display: keyof T;
-  item: (listItem: T, listState: ListState) => JSX.Element | string;
-};
-
-/**
- *  set prop type of this component
- */
 type SelectProps<T> = {
-  data: Array<T>;
-  list: ListDef<T>;
-  withDivider?: boolean;
-  full?: boolean;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
-  getReferenceWidth?: boolean;
-  centerItems?: boolean;
-  spaceY?: boolean;
-  onSelect?: (selectedItem: T) => void;
-  createHeader?: () => JSX.Element;
-  createFooter?: () => JSX.Element;
-  placement?:
-    | 'auto'
-    | 'auto-start'
-    | 'auto-end'
-    | 'top'
-    | 'bottom'
-    | 'left'
-    | 'right'
-    | 'top-start'
-    | 'top-end'
-    | 'bottom-start'
-    | 'bottom-end'
-    | 'right-start'
-    | 'right-end'
-    | 'left-start'
-    | 'left-end';
+  data: T[];
+  listDef: ListDef<T>;
+  initial?: T;
+  onSelect?: (item: T) => void;
 };
 
-/**
- *  define offset modifier for popper js
- */
-const offsetModifier = {
-  name: 'offset',
-  options: {
-    offset: [0, 10],
-  },
-};
+export const Select = <T extends object>({ data, listDef, initial, onSelect }: SelectProps<T>) => {
+  const [selected, setSelected] = useState<T>({} as T);
 
-export const Select = <T extends object>({
-  data,
-  list,
-  withDivider,
-  full,
-  size,
-  placement,
-  getReferenceWidth,
-  centerItems,
-  spaceY,
-  onSelect,
-  createHeader,
-  createFooter,
-}: SelectProps<T>) => {
-  // deconstruct fields from listDef object
-  const { display, item } = list;
+  useEffect(() => (initial ? setSelected(initial) : setSelected(data[0])), [initial]);
 
-  // set initial selection
-  const [selected, setSelected] = useState(data[0]);
+  const { key, render, disable } = listDef;
 
-  // set reference element for popper
-  const [reference, setReference] = useState<HTMLButtonElement | null>(null);
-
-  // set popper element
-  const [popper, setPopper] = useState<HTMLDivElement | null>(null);
-
-  // create a popper
-  const { styles, attributes } = usePopper(reference, popper, { placement, modifiers: [offsetModifier] });
+  const { x, y, reference, floating, strategy } = useFloating({
+    whileElementsMounted: autoUpdate,
+    middleware: [
+      offset(10),
+      size({
+        apply({ rects, elements }) {
+          Object.assign(elements.floating.style, {
+            maxWidth: `${rects.reference.width}px`,
+          });
+        },
+      }),
+      shift({ padding: 5 }),
+    ],
+  });
 
   return (
-    <Listbox value={selected} onChange={setSelected} as="div">
-      <Listbox.Button as="button" ref={setReference} className={selectBtnStyles(full, size)}>
-        <>{selected[display]}</>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className={selectSvgStyles(size)}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-        </svg>
-      </Listbox.Button>
+    <Listbox ref={reference} as="div" value={selected} onChange={setSelected}>
+      {({ open }) => (
+        <>
+          <Listbox.Button as="button" className={listBtnClass()}>
+            <>{selected[key]}</>
+            <span>
+              <ChevronDown rotate={open} />
+            </span>
+          </Listbox.Button>
 
-      <Listbox.Options
-        as="div"
-        {...attributes.popper}
-        ref={setPopper}
-        style={
-          getReferenceWidth
-            ? { ...styles.popper, width: `${reference?.offsetWidth}px` }
-            : { ...styles.popper, maxWidth: '28rem' }
-        }
-        className={selectOptionsStyles(spaceY)}
-      >
-        {createHeader && <>{createHeader()}</>}
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                <Listbox.Options
+                  static
+                  ref={floating}
+                  as="div"
+                  style={{ position: strategy, top: y ?? 0, left: x ?? 0 }}
+                  className={listOptionsClass()}
+                >
+                  <ul className="overflow-y-auto max-h-96">
+                    {data.map((listItem: T, index: number) => {
+                      /**
+                       *  check if disable item function is defined
+                       *
+                       *  assign the returned value of the function to the disabled prop
+                       *
+                       *  if disable item function is not supplied, return false by default
+                       */
+                      const isDisabled = disable ? disable(listItem) : false;
 
-        {/** unordered list starts here */}
-        <ul className="max-h-60 overflow-auto">
-          {data.map((listItem: T, index: number) => {
-            return (
-              <Listbox.Option value={listItem} key={index} as={Fragment}>
-                {(state) => {
-                  return (
-                    <li
-                      onClick={onSelect ? () => onSelect(listItem) : () => null}
-                      className={selectItemStyles(state, centerItems, withDivider, getReferenceWidth, size)}
-                    >
-                      {item(listItem, state)}
-                    </li>
-                  );
-                }}
-              </Listbox.Option>
-            );
-          })}
-        </ul>
-
-        {createFooter && <>{createFooter()}</>}
-      </Listbox.Options>
+                      return (
+                        <Listbox.Option key={index} value={listItem} as={Fragment} disabled={isDisabled}>
+                          {(state) => {
+                            /**
+                             *  set the on select prop to return the value of the selected list item
+                             *
+                             *  if on select function is not defined, call a function that returns null
+                             *
+                             *  render the item in the DOM based on user defined element (or just a plain string)
+                             */
+                            return (
+                              <li onClick={onSelect ? () => onSelect(listItem) : () => null}>
+                                {render(listItem, state)}
+                              </li>
+                            );
+                          }}
+                        </Listbox.Option>
+                      );
+                    })}
+                  </ul>
+                </Listbox.Options>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
     </Listbox>
   );
 };
 
-Select.defaultProps = {
-  withDivider: false,
-  full: false,
-  size: 'md',
-  placement: 'bottom',
-  getReferenceWidth: true,
-  centerItems: false,
-  spaceY: false,
+const ChevronDown: FunctionComponent<{ rotate: boolean }> = ({ rotate }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={2}
+      stroke="currentColor"
+      className={`${rotate && 'rotate-180'} w-4 h-4 transition-transform`}
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+    </svg>
+  );
 };
